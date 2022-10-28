@@ -57,7 +57,7 @@ set detach-on-fork on/off
 # 设置当进程调用fork时是否进入子进程
 set follow-fork-mode parent/child
 
-# CentOS7修改默认内核
+# CentOS7修改默认启动内核
 # 查看当前内核版本
 uname -r
 # 查看当前默认启动内核
@@ -101,4 +101,157 @@ cd proxychains-proxychains-4.4.0/
 make
 sudo make install
 cp src/proxychains.conf /etc/
+
+# ulimit -a
+#参　　数：
+#  -a 　显示目前资源限制的设定。 
+#  -c <core文件上限> 　设定core文件的最大值，单位为区块。 
+#  -d <数据节区大小> 　程序数据节区的最大值，单位为KB。 
+#  -f <文件大小> 　shell所能建立的最大文件，单位为区块。 
+#  -H 　设定资源的硬性限制，也就是管理员所设下的限制。 
+#  -m <内存大小> 　指定可使用内存的上限，单位为KB。 
+#  -n <文件数目> 　指定同一时间最多可开启的文件数。 
+#  -p <缓冲区大小> 　指定管道缓冲区的大小，单位512字节。 
+#  -s <堆叠大小> 　指定堆叠的上限，单位为KB。 
+#  -S 　设定资源的弹性限制。 
+#  -t <CPU时间> 　指定CPU使用时间的上限，单位为秒。 
+#  -u <程序数目> 　用户最多可开启的程序数目。 
+#  -v <虚拟内存大小> 　指定可使用的虚拟内存上限，单位为KB。
+# 开启coredump
+ulimit -c
+# 只对当前shell生效
+ulimit -c unlimited
+# core生成目录
+echo "/root/hpcf-dev/core-%e-%p-%t" > /proc/sys/kernel/core_pattern
+# 修改 open files
+# 这只是在当前终端有效，退出之后，open files又变为默认值。
+ulimit -HSn 102400
+
+# 共享内存
+# ipcs命令 用于报告Linux中进程间通信设施的状态，显示的信息包括消息列表、共享内存和信号量的信息。
+# 显示共享内存
+ipcs -m
+# 删除共享内存 shmid
+ipcrm -m <shmid>
+
+
+# git
+# git修改本地或远程分支名称
+# 1. 先将本地分支重命名
+git branch -m oldBranch newBranch
+# 2. 删除远程分支
+git push origin --delete oldBranch
+# 3. 将重命名后的分支推到远端
+git push origin newBranch
+# 4. 把修改后的本地分支与远程分支关联
+git branch --set-upstream-to origin/newBranch
+
+
+# 网络相关设置优化
+echo "65535" > /proc/sys/net/core/somaxconn
+echo "20000" > /proc/sys/net/core/netdev_max_backlog
+echo "20000" > /proc/sys/net/ipv4/tcp_max_syn_backlog
+echo "60" > /proc/sys/net/ipv4/tcp_keepalive_time
+echo "10" > /proc/sys/net/ipv4/tcp_keepalive_intvl
+echo "3" > /proc/sys/net/ipv4/tcp_keepalive_probes
+
+
+# tmux
+# ===========================================
+# 新建会话
+tmux new -s <session-name>
+# 分离会话
+tmux detach
+# 查看当前所有的 Tmux 会话
+tmux ls
+# 接入会话
+tmux attach -t <session-name>
+# 杀死会话
+tmux kill-session -t <session-name>
+# 切换会话
+tmux switch -t <session-name>
+# 重命名会话
+tmux rename-session -t <old-name> <new-name>
+# ===========================================
+# 划分窗格
+# 划分上下两个窗格
+tmux split-window
+# 划分左右两个窗格
+tmux split-window -h
+# 移动光标
+# 光标切换到上方窗格
+tmux select-pane -U
+# 光标切换到下方窗格
+tmux select-pane -D
+# 光标切换到左边窗格
+tmux select-pane -L
+# 光标切换到右边窗格
+tmux select-pane -R
+# 交换窗格位置
+# 当前窗格上移
+tmux swap-pane -U
+# 当前窗格下移
+tmux swap-pane -D
+# ===========================================
+# 新建窗口
+tmux new-window
+# 新建一个指定名称的窗口
+tmux new-window -n <window-name>
+# 切换窗口
+# 切换到指定编号的窗口
+tmux select-window -t <window-number>
+# 切换到指定名称的窗口
+tmux select-window -t <window-name>
+# 关闭窗口
+tmux kill-window -t <window-name>
+# 重命名窗口
+tmux rename-window <new-name>
+# ===========================================
+# 其它命令
+# 列出所有快捷键，及其对应的 Tmux 命令
+tmux list-keys
+# 列出所有 Tmux 命令及其参数
+tmux list-commands
+# 列出当前所有 Tmux 会话的信息
+tmux info
+# 重新加载当前的 Tmux 配置
+tmux source-file ~/.tmux.conf
+# 快捷键
+# 会话===========================================
+Ctrl+b d：分离当前会话。
+Ctrl+b s：列出所有会话。
+Ctrl+b $：重命名当前会话。
+# 窗格===========================================
+Ctrl+b %：划分左右两个窗格。
+Ctrl+b "："划分上下两个窗格。
+Ctrl+b <arrow key>：光标切换到其他窗格。<arrow key>是指向要切换到的窗格的方向键，比如切换到下方窗格，就按方向键↓。
+Ctrl+b ;：光标切换到上一个窗格。
+Ctrl+b o：光标切换到下一个窗格。
+Ctrl+b {：当前窗格与上一个窗格交换位置。
+Ctrl+b }：当前窗格与下一个窗格交换位置。
+Ctrl+b Ctrl+o：所有窗格向前移动一个位置，第一个窗格变成最后一个窗格。
+Ctrl+b Alt+o：所有窗格向后移动一个位置，最后一个窗格变成第一个窗格。
+Ctrl+b x：关闭当前窗格。
+Ctrl+b !：将当前窗格拆分为一个独立窗口。
+Ctrl+b z：当前窗格全屏显示，再使用一次会变回原来大小。
+Ctrl+b Ctrl+<arrow key>：按箭头方向调整窗格大小。
+Ctrl+b q：显示窗格编号。
+# 窗口===========================================
+Ctrl+b c：创建一个新窗口，状态栏会显示多个窗口的信息。
+Ctrl+b p：切换到上一个窗口（按照状态栏上的顺序）。
+Ctrl+b n：切换到下一个窗口。
+Ctrl+b <number>：切换到指定编号的窗口，其中的<number>是状态栏上的窗口编号。
+Ctrl+b w：从列表中选择窗口。
+Ctrl+b ,：窗口重命名。
+Ctrl+b &：关闭窗口。
+
+
+
+# docker
+# 使用Dockerfile创建镜像
+docker build <repo>:<tag> .
+
+
+# gdb
+
 
