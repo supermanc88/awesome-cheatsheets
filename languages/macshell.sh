@@ -3,8 +3,15 @@ Command + H : 将窗口隐藏
 Command + M : 将窗口最小化
 Command + W : 关闭最前面的窗口。要关闭 App 的所有窗口，请按下 Option-Command-W
 Command + Tab : 可以在活跃的应用中切换
+# finder
+Command + Option + space : 打开finder
 Command + Shift + . : 显示隐藏文件快捷键
 Command + Option + P : 显示隐藏文件路径
+Command + Up Arrow : 跳转到上一级目录
+Command＋[ : 相当于 back ，返回上次打开的目录
+Command + Shift + G : 在finder中前往指定目录
+Command + Shift + O : 在finder中打开Documents目录
+
 
 
 # 安装wine
