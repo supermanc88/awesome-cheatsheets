@@ -38,3 +38,20 @@ sudo xattr -rd com.apple.quarantine /Applications/xxxxxx.app
 defaults write com.apple.finder AppleShowAllFiles -bool true
 # Mac隐藏“隐藏文件”命令：
 defaults write com.apple.finder AppleShowAllFiles -bool false
+
+
+# smb
+sudo touch /etc/nsmb.conf 
+#然后输入您Mac装置的密码,此步骤必须
+sudo touch /etc/nsmb.conf
+#创建nsmb.conf文件,此步骤必须
+sudo bash -c 'echo "[default]" >> /etc/nsmb.conf'
+#写入文件抬头，此步骤必须
+sudo bash -c 'echo "signing_required=no" >> /etc/nsmb.conf'
+#关闭 SMB 的签章功能
+echo "mc_on=no" | sudo tee -a /etc/nsmb.conf
+#macOS 中完全停用 SMB 多通道支持
+echo "mc_prefer_wired=yes" | sudo tee -a /etc/nsmb.conf
+#优先有线连接，Wi-Fi仅用作故障转移以实现冗余
+cat /etc/nsmb.conf
+#查看是否添加成功

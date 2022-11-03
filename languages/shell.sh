@@ -77,7 +77,8 @@ grub2-editenv list
 # menuentry 'CentOS Linux (3.10.0-957.el7.x86_64) 7 (Core)' --class centos --class gnu-linux --class
 
 
-# curl 使用代理
+# curl 
+# 使用代理
 curl -x https://10.20.62.74:7893 -U chm:chm123 https://www.google.com
 curl --proxy https://10.20.62.74:7893 --proxy-user chm:chm123 https://www.google.com
 # 设置代理
@@ -87,6 +88,8 @@ export http_proxy=$proxy
 export https_proxy=$proxy
 export ftp_proxy=$proxy
 export no_proxy="localhost, 127.0.0.1, ::1"
+# 下载文件
+curl -#o https://www.google.com/test.txt test.txt
 
 # 下载proxychains
 apt search proxychains4
