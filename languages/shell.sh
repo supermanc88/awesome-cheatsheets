@@ -1,3 +1,21 @@
+# shortcuts
+Ctrl + LeftArrow : 将光标向前移动一个单词（Mac下为Alt）
+Ctrl + RightArrow : 将光标向后移动一个单词（Mac下为Alt）
+Ctrl + A : 移动光标到命令行首
+Ctrl + E : 移动光标到命令行尾
+Ctrl + K : 删除光标之后的所有字符
+Ctrl + L : 清屏并重新显示
+Ctrl + P : 上一条命令，可以一直按表示一直往前翻
+Ctrl + N : 下一条命令
+Ctrl + R : 历史命令中出现过的字符串，按字符串查找历史命令
+
+
+# 修改语言
+export LANG="en_US.UTF-8"
+export LANG="zh_CN.UTF-8"
+export LANG="zh_CN.GBK"
+
+
 # 获取进程pid
 ps aux | grep -v grep | awk '{print $2}'
 
@@ -13,6 +31,12 @@ awk -F, '{print $1,$2}'   log.txt
 # 使用多个分隔符.先使用空格分割，然后对分割结果再使用","分割
 awk -F '[ ,]'  '{print $1,$2,$5}'   log.txt
 
+
+# tar
+# 压缩tar.gz，只打tar的话，就不需要z参数
+tar zvcf xx.tar.gz /tmp/xxxxx
+# 解压缩
+tar zvxf xx.tar.gz
 
 # Docker
 # 启动容器
@@ -149,6 +173,10 @@ git push origin newBranch
 # 4. 把修改后的本地分支与远程分支关联
 git branch --set-upstream-to origin/newBranch
 
+# git初始设置
+git config --global user.name "supermanc88"
+git config --global user.email "supermanc88@gmail.com"
+
 
 # 网络相关设置优化
 echo "65535" > /proc/sys/net/core/somaxconn
@@ -252,9 +280,29 @@ Ctrl+b &：关闭窗口。
 
 # docker
 # 使用Dockerfile创建镜像
-docker build <repo>:<tag> .
+docker build -t <repo>:<tag> .
+# docker导入和导出镜像
+# 镜像导入是一个复制的过程，容器导入是将当前容器变成一个新的镜像。
+# docker import 可以为镜像指定新名称
+# docker load 不能对载入的镜像重命名
+# export 导出（import 导入）是根据容器拿到的镜像，再导入时会丢失镜像所有的历史记录和元数据信息（即仅保存容器当时的快照状态），所以无法进行回滚操作。
+# 而 save 保存（load 加载）的镜像，没有丢失镜像的历史，可以回滚到之前的层（layer）。
+# 导出
+docker save > dockerdemo.tar dockerdemo
+# 导入
+docker load < dockerdemo.tar
+# docker导入和导出容器
+# 导出
+docker export -o ./dockerdemocontainer.tar dockerdemo
+# 导入
+docker import dockerdemocontainer.tar dockerdemo:imp
 
 
 # gdb
+
+# signal 信号
+# trap忽略信号，信号类别可通过 kill -l列出
+trap '' SIGINT SIGTERM
+
 
 
