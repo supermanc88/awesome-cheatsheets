@@ -12,7 +12,8 @@ Command＋[ : 相当于 back ，返回上次打开的目录
 Command + Shift + G : 在finder中前往指定目录
 Command + Shift + O : 在finder中打开Documents目录
 
-
+# fusion
+# 4C21U-2KK9Q-M8130-4V2QH-CF810
 
 # 安装wine
 brew tap gcenx/wine
