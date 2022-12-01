@@ -56,3 +56,6 @@ echo "mc_prefer_wired=yes" | sudo tee -a /etc/nsmb.conf
 #优先有线连接，Wi-Fi仅用作故障转移以实现冗余
 cat /etc/nsmb.conf
 #查看是否添加成功
+
+
+# 列出进程

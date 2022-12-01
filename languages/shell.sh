@@ -9,6 +9,31 @@ Ctrl + P : 上一条命令，可以一直按表示一直往前翻
 Ctrl + N : 下一条命令
 Ctrl + R : 历史命令中出现过的字符串，按字符串查找历史命令
 
+# debian安装界面
+apt -y install task-kde-desktop
+
+# yum
+# 更新缓存
+yum makecache
+# 清除yum缓存
+yum clean all
+# 清除缓存目录下的软件包/var/cache/yum
+yum clean packages
+# 显示已安装的包
+yum list installed
+# 列出所有可更新的软件包
+yum list updates
+# 列出所有已安装但不在yum repo内的软件包
+yum list extras
+# 列出软件包的依赖关系
+yum deplist <package-name>
+# 获取软件包信息
+yum info <package-name>
+# 下载rpm包，如果下载的包包含没有满足的依赖关系，yum会把相关的依赖包也下载，但不会安装
+# 一般情况下会保存在 /var/cache/yum/x86_64/<centos-version>/<repository>/packages
+yum install --downloadonly <package-name>
+# 指定下载目录
+yum install --downloadonly --downloaddir=<dir> <package-name>
 
 # 修改语言
 export LANG="en_US.UTF-8"
@@ -30,6 +55,15 @@ awk '{print $1,$4}' log.txt
 awk -F, '{print $1,$2}'   log.txt
 # 使用多个分隔符.先使用空格分割，然后对分割结果再使用","分割
 awk -F '[ ,]'  '{print $1,$2,$5}'   log.txt
+
+
+# IFS 字段分隔符
+# shell默认分隔符为 空格 制表符 换行符
+# 可使用一个环境变量保存原来的分隔符，修改的分隔符使用完后，再恢复
+# 换行符
+IFS=$'\n'
+# 多个分隔符
+IFS=:;
 
 # makefile
 # = 是递归展开的，可以设置后面定义的变量，只有在变量在使用时才会展开
@@ -165,6 +199,11 @@ ulimit -HSn 102400
 ipcs -m
 # 删除共享内存 shmid
 ipcrm -m <shmid>
+# 删除所有共享内存
+for id in $(ipcs -m | grep -v shmid | grep -v Shared | awk '{print $2}')
+do
+	ipcrm -m $id
+done
 
 
 # git
