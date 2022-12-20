@@ -77,11 +77,6 @@ tar zvcf xx.tar.gz /tmp/xxxxx
 # 解压缩
 tar zvxf xx.tar.gz
 
-# Docker
-# 启动容器
-docker run --name=my_container -it rep:tag /bin/bash
-# 端口映射
-docker run --name=my_container -it -p 10022:22 -p 18080:8080 rep:tag /bin/bash
 
 # system-uuid
 dmidecode -s system-uuid
@@ -323,6 +318,12 @@ Ctrl+b &：关闭窗口。
 
 
 # docker
+# 启动一个或多个已经停止的容器
+docker start <container>
+# 停止一个容器
+docker stop <container>
+# 重启一个容器
+docker restart <container>
 # 使用Dockerfile创建镜像
 docker build -t <repo>:<tag> .
 # docker导入和导出镜像
@@ -341,12 +342,26 @@ docker export -o ./dockerdemocontainer.tar dockerdemo
 # 导入
 docker import dockerdemocontainer.tar dockerdemo:imp
 
+# 启动容器
+docker run --name=my_container -it rep:tag /bin/bash
+# 端口映射
+docker run --name=my_container -it -p 10022:22 -p 18080:8080 rep:tag /bin/bash
+# 挂载目录
+docker run --name=my_container -it -v /host_dir:/container_dir rep:tag /bin/bash
+
 
 # gdb
 
 # signal 信号
 # trap忽略信号，信号类别可通过 kill -l列出
 trap '' SIGINT SIGTERM
+
+
+# tree命令
+# 显示深度
+tree -L 3
+# 只显示目录
+tree -d -L 3
 
 
 
