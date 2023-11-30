@@ -12,6 +12,28 @@ Ctrl + R : 历史命令中出现过的字符串，按字符串查找历史命令
 # debian安装界面
 apt -y install task-kde-desktop
 
+# centos更新源
+# centos6.10
+minorver=6.10
+sudo sed -e "s|^mirrorlist=|#mirrorlist=|g" \
+         -e "s|^#baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos-vault/$minorver|g" \
+         -i.bak \
+         /etc/yum.repos.d/CentOS-*.repo
+# centos7/8
+sudo sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+         -e 's|^#baseurl=http://mirror.centos.org|baseurl=https://mirrors.tuna.tsinghua.edu.cn|g' \
+         -i.bak \
+         /etc/yum.repos.d/CentOS-*.repo
+
+
+# epel源下载地址
+https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/
+
+# end point 源
+https://packages.endpointdev.com/
+yum install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+
+
 # yum
 # 更新缓存
 yum makecache
@@ -134,9 +156,15 @@ grub2-editenv list
 # saved_entry=CentOS Linux (3.10.0-693.el7.centos.toa.x86_64) 7 (Core)
 # menuentry 'CentOS Linux (3.10.0-957.el7.x86_64) 7 (Core)' --class centos --class gnu-linux --class
 
+# 代理 proxy
+export proxy="http://192.168.86.127:15678"
+export http_proxy=$proxy
+export https_proxy=$proxy
+export ftp_proxy=$proxy
+export no_proxy="localhost, 127.0.0.1, ::1"
 
 # curl 
-# 使用代理
+# 使用代理 proxy
 curl -x https://10.20.62.74:7893 -U chm:chm123 https://www.google.com
 curl --proxy https://10.20.62.74:7893 --proxy-user chm:chm123 https://www.google.com
 # 设置代理
@@ -147,7 +175,7 @@ export https_proxy=$proxy
 export ftp_proxy=$proxy
 export no_proxy="localhost, 127.0.0.1, ::1"
 # 下载文件
-curl -#o https://www.google.com/test.txt test.txt
+curl -o https://www.google.com/test.txt test.txt
 
 # 下载proxychains
 apt search proxychains4
@@ -212,9 +240,25 @@ git push origin newBranch
 # 4. 把修改后的本地分支与远程分支关联
 git branch --set-upstream-to origin/newBranch
 
+# git切换分支
+git branch <branch>
+
 # git初始设置
 git config --global user.name "supermanc88"
 git config --global user.email "supermanc88@gmail.com"
+
+# git clone 指定分支
+git clone -b <branch> <repo>
+
+# git 恢复到某个版本
+# 恢复到当前版本
+git reset --hard HEAD
+# 恢复到上一个版本
+git reset --hard HEAD^
+# 恢复到前两个版本
+git reset --hard HEAD~2
+# 恢复到指定id版本
+git reset --hard id
 
 
 # 网络相关设置优化
@@ -318,6 +362,22 @@ Ctrl+b &：关闭窗口。
 
 
 # docker
+# centos 安装docker
+sudo yum remove docker \
+                  docker-client \
+                  docker-client-latest \
+                  docker-common \
+                  docker-latest \
+                  docker-latest-logrotate \
+                  docker-logrotate \
+                  docker-engine
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl start docker
+sudo docker run hello-world
 # 启动一个或多个已经停止的容器
 docker start <container>
 # 停止一个容器
@@ -326,6 +386,10 @@ docker stop <container>
 docker restart <container>
 # 使用Dockerfile创建镜像
 docker build -t <repo>:<tag> .
+docker build --build-arg HTTP_PROXY=http://192.168.86.127:15678 \
+             --build-arg HTTPS_PROXY=http://192.168.86.127:15678 \
+             --build-arg NO_PROXY=localhost,127.0.0.1 \
+             -t iccs:v1.0.2.2.new15 .
 # docker导入和导出镜像
 # 镜像导入是一个复制的过程，容器导入是将当前容器变成一个新的镜像。
 # docker import 可以为镜像指定新名称
@@ -342,12 +406,76 @@ docker export -o ./dockerdemocontainer.tar dockerdemo
 # 导入
 docker import dockerdemocontainer.tar dockerdemo:imp
 
+# docker 拉取镜像
+docker pull --platform linux/amd64 ubuntu:22.04
+
 # 启动容器
 docker run --name=my_container -it rep:tag /bin/bash
 # 端口映射
 docker run --name=my_container -it -p 10022:22 -p 18080:8080 rep:tag /bin/bash
 # 挂载目录
 docker run --name=my_container -it -v /host_dir:/container_dir rep:tag /bin/bash
+docker run --name=hpcf_dev -it -p 10022:22 -v /Users/chengheming/Source:/root/hostdir ubuntu:22.04 /bin/bash
+
+# docker 文件拷贝
+docker cp my_container:/path /hostpath
+docker cp /hostpath my_container:/path
+
+
+# docker centos服务管理安装 service命令
+yum install initscripts -y
+
+
+# docker中的1号进程
+# 容器内的进程有2种情况，1.只有一个进程，就是1号进程 2.1号进程和由它派生出来的整个进程树
+
+
+# 获取容器退出的错误码
+# 0     一个归属的前台进程退出(通常是执行完成)
+# 1     由于应用程序错误导致的失败
+# 137   表示容器接收到SIGKILL信号
+# 139   表示容器接收到SIGSEGV信号
+# 143   表示容器接收到SIGTERM信号
+docker inspect <container-id> --format='{{.State.ExitCode}}'
+
+# docker logs
+docker logs <container>
+
+
+# docker镜像
+# 列出所有镜像
+docker image ls
+
+
+# docker 服务器设置代理
+# 在执行docker pull时，是由守护进程dockerd来执行。 因此，代理需要配在dockerd的环境中。 而这个环境，则是受systemd所管控，因此实际是systemd的配置。
+# https://docs.docker.com/config/daemon/systemd/#httphttps-proxy
+sudo mkdir -p /etc/systemd/system/docker.service.d
+touch /etc/systemd/system/docker.service.d/http-proxy.conf
+# 在上面文件中添加以下
+[Service]
+Environment="HTTP_PROXY=http://192.168.86.127:15678"
+Environment="HTTPS_PROXY=http://192.168.86.127:15678"
+Environment="NO_PROXY=127.0.0.1,::1,localhost"
+# 重启服务
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+# 检查配置是否生效
+sudo systemctl show --property=Environment docker
+
+# docker 
+
+# docker修改镜像源
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": ["https://ou52qqzc.mirror.aliyuncs.com"]
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+
 
 
 # gdb
@@ -362,6 +490,44 @@ trap '' SIGINT SIGTERM
 tree -L 3
 # 只显示目录
 tree -d -L 3
+
+
+
+# readelf 工具
+# readelf命令可以用来查看elf格式文件的信息，与objdump相比,该工具显示的信息较为详细
+# 显示elf文件头
+readelf -h <elf>
+# 显示所有seciton
+readelf -S <elf>
+# 显示指定的section
+readelf -p <section>
+
+
+
+# 获取当前目录名
+pwd | rev | awk -F \/ '{print $1}' | rev
+
+
+# 查看jar包版本号
+# 解压jar包
+jar -xvf xxx.jar
+# 对任意的class文件使用下面命令
+javap -verbose xxx.class|grep version
+# 查看major version:对应的号
+# major version:52 对应 java 8
+# major version:51 对应 java 7
+# major version:50 对应 java 6
+
+
+
+
+
+
+
+
+
+
+
 
 
 

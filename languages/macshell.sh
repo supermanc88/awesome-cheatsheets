@@ -12,6 +12,9 @@ Command＋[ : 相当于 back ，返回上次打开的目录
 Command + Shift + G : 在finder中前往指定目录
 Command + Shift + O : 在finder中打开Documents目录
 
+Ctrl + F3 : 显示/隐藏Dock
+Command + Option + D : 显示/隐藏Dock
+
 # fusion
 # 4C21U-2KK9Q-M8130-4V2QH-CF810
 
@@ -31,6 +34,8 @@ defaults write com.apple.dock springboard-rows Default
 defaults write com.apple.dock springboard-columns Default
 killall Dock
 
+#开启“任何来源”的方法如下：
+sudo spctl  --master-disable
 # app已损坏 来自不明的开发者
 sudo xattr -rd com.apple.quarantine /Applications/xxxxxx.app
 
@@ -39,6 +44,9 @@ sudo xattr -rd com.apple.quarantine /Applications/xxxxxx.app
 defaults write com.apple.finder AppleShowAllFiles -bool true
 # Mac隐藏“隐藏文件”命令：
 defaults write com.apple.finder AppleShowAllFiles -bool false
+
+# 已损坏，无法打开
+sudo xattr -rd com.apple.quarantine /Applications/electerm.app
 
 
 # smb
